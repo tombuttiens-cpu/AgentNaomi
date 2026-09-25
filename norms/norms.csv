@@ -1,0 +1,6 @@
+test,measure,kind,direction,age_min,age_max,education,mean,sd,table,scale,source
+EXAMPLE-MEMORY,total recall,meansd,higher,18,49,*,45.0,8.0,,,FICTIONAL example - replace
+EXAMPLE-MEMORY,total recall,meansd,higher,50,89,*,40.0,9.0,,,FICTIONAL example - replace
+EXAMPLE-SPEED,time (s),meansd,lower,18,89,low,55.0,15.0,,,FICTIONAL example - replace
+EXAMPLE-SPEED,time (s),meansd,lower,18,89,high,42.0,12.0,,,FICTIONAL example - replace
+EXAMPLE-SUBTEST,raw,table,higher,18,89,*,,,example_subtest.csv,scaled,FICTIONAL example - replace

@@ -1,0 +1,6 @@
+# Patient data never goes to git. Only fictional EXAMPLE-* cases are tracked.
+cases/*
+!cases/EXAMPLE-*/
+cases/**/output/
+__pycache__/
+*.pyc

@@ -1,0 +1,7 @@
+# Fictional example case - no real patient
+age: 62
+education: high
+sex: F
+handedness: right
+test_date: 2026-09-20
+referral_question: Memory complaints for 1 year; rule out neurodegenerative process.
