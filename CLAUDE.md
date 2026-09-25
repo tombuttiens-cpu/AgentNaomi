@@ -37,4 +37,4 @@ When she asks you to process a case, follow `.claude/skills/process-case/SKILL.m
 - `norms/classification.csv` holds her classification labels by z-score.
 - `templates/` holds her report templates and example phrasing.
 
-Output language for reports: **TODO: confirm (Dutch / French / English)**.
+Output language: **Dutch (Nederlands)** for all reports, summaries and communication with her.
