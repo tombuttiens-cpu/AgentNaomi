@@ -48,3 +48,10 @@ case, as described in `docs/norm-sources.md`.
 For each case, follow `.claude/skills/process-case/SKILL.md`. File roles are
 described in `docs/naming-convention.md`, her writing style in
 `templates/stijlgids.md`.
+
+## Feedback
+
+When Naomi gives feedback (in chat or as comments in a report), log each
+point in `docs/feedback-log.md`, change the file it affects (skill, style
+guide, norm sources or a tool) and note the change in the log. Resolved open
+questions move from "Open questions" into the table.

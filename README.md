@@ -25,6 +25,8 @@ report in Naomi's own Word template, written in Dutch.
 | `.claude/skills/process-case/` | Step-by-step case workflow |
 | `docs/naming-convention.md` | What a case folder must contain |
 | `docs/norm-sources.md` | Which norm table per test and norm group, plus her classification |
+| `docs/overzicht-voor-naomi.md` | Dutch overview for Naomi: what the agent does and how to give feedback |
+| `docs/feedback-log.md` | Her feedback and what changed because of it |
 | `docs/workflow.md` | Technical notes (Drive downloads and uploads) |
 | `templates/stijlgids.md` | Her writing style and fixed sentences |
 | `tools/scoring.py` | Conversions, Excel-exact rounding, classification |
