@@ -14,6 +14,7 @@ from __future__ import annotations
 import csv
 import math
 from dataclasses import dataclass
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,6 +24,25 @@ NORMS_DIR = ROOT / "norms"
 # ---------------------------------------------------------------------------
 # Score conversions
 # ---------------------------------------------------------------------------
+
+def excel_round(x: float, digits: int = 2) -> float:
+    """Round like Excel's ROUND (half away from zero), as in her Normen.xlsx."""
+    q = Decimal(str(x)).quantize(Decimal(1).scaleb(-digits), rounding=ROUND_HALF_UP)
+    return float(q)
+
+
+def z_workbook(raw: float, mean: float, sd: float) -> float:
+    """Z exactly as her workbook computes it: ROUND((x - M) / SD, 2), no sign flip."""
+    if sd <= 0:
+        raise ValueError(f"SD must be positive, got {sd}")
+    q = (Decimal(str(raw)) - Decimal(str(mean))) / Decimal(str(sd))
+    return float(q.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+
+
+def format_z(z: float) -> str:
+    """'Z = -0,94' as written in her reports."""
+    return "Z = " + f"{z:.2f}".replace(".", ",")
+
 
 def z_from_raw(raw: float, mean: float, sd: float, higher_is_better: bool = True) -> float:
     """z-score, sign-corrected so that a negative z always means 'worse'."""

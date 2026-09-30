@@ -28,13 +28,38 @@ class ConversionTests(unittest.TestCase):
             scoring.z_from_raw(1, 1, 0)
 
 
+class WorkbookTests(unittest.TestCase):
+    """Values her Normen.xlsx computed (cached cell values), reproduced exactly."""
+
+    def test_reproduces_workbook(self):
+        cases = [  # raw, M, SD, workbook result
+            (4, 5.7, 1.8, -0.94), (7, 10.6, 2.3, -1.57), (30, 44.9, 8.5, -1.75),
+            (6, 8, 3, -0.67), (32, 32.7, 2.6, -0.27), (21.5, 19, 6.2, 0.4),
+            (23.5, 17.5, 6.3, 0.95), (2, 10.9, 4, -2.23), (4, 12.4, 4.3, -1.95),
+        ]
+        for raw, m, sd, expected in cases:
+            self.assertEqual(scoring.z_workbook(raw, m, sd), expected, (raw, m, sd))
+
+    def test_half_away_from_zero(self):
+        self.assertEqual(scoring.excel_round(-2.225), -2.23)
+        self.assertEqual(scoring.excel_round(2.225), 2.23)
+
+    def test_format(self):
+        self.assertEqual(scoring.format_z(-0.94), "Z = -0,94")
+        self.assertEqual(scoring.format_z(-1.6), "Z = -1,60")
+
+
 class ClassificationTests(unittest.TestCase):
+    """Her Scorehulpmiddel bands."""
+
     def test_bands(self):
         bands = scoring.load_classification()
-        self.assertEqual(scoring.classify(0, bands), "Average")
-        self.assertEqual(scoring.classify(-1.3, bands), "Average")
-        self.assertEqual(scoring.classify(-1.31, bands), "Below average")
-        self.assertEqual(scoring.classify(-5, bands), "Well below average")
+        expect = {2.0: "zeer hoog", 1.99: "hoog", 1.33: "hoog", 1.32: "hooggemiddeld",
+                  0.67: "hooggemiddeld", 0.66: "gemiddeld", -0.67: "gemiddeld",
+                  -0.68: "laaggemiddeld", -1.33: "laaggemiddeld", -1.34: "laag",
+                  -2.0: "laag", -2.01: "zeer laag"}
+        for z, label in expect.items():
+            self.assertEqual(scoring.classify(z, bands), label, z)
 
 
 class NormLookupTests(unittest.TestCase):

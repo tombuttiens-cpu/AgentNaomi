@@ -1,31 +1,21 @@
 # AgentNaomi
 
-A Claude agent that handles the paperwork after a neuropsychological
-assessment.
+A Claude agent that turns a neuropsychological examination (NPO) into a draft
+report in Naomi's own Word template, written in Dutch.
 
-## How it works
+## What it does per patient
 
-1. Make an anonymous folder `cases/<CASEID>/` and name its files as
-   described in [`docs/naming-convention.md`](docs/naming-convention.md).
-2. Open Claude Code in this repo and say *"process case &lt;CASEID&gt;"*.
-3. The agent checks the folder and scores every test with
-   `tools/score_case.py`, which is plain code, so the model never does the
-   math. It then summarises the documents and writes a draft report to
-   `cases/<CASEID>/output/`.
-4. She reviews the draft, fixes it, and signs off.
-
-## Privacy
-
-- `cases/` is git-ignored. Patient data stays on her machine and never
-  reaches GitHub. Only the fictional `EXAMPLE-*` cases are tracked.
-- Keep this repository **private**. The norm tables may be copyrighted.
-
-## Try it
-
-```
-python3 tools/score_case.py cases/EXAMPLE-001
-python3 -m unittest discover -s tests
-```
+1. Reads the Drive case folder: intake notes, the scan of the test forms, her
+   `Normen.xlsx` workbook and the BDI/SCL-90 questionnaires.
+2. Reads every score form in the scan and checks the raw scores against her
+   workbook. Any mismatch is reported, not silently fixed.
+3. Scores everything against the correct norm group (sex, age, education)
+   using code, never mental arithmetic. If no norm group fits, it asks her.
+4. Writes the (hetero)anamnese, observations, discussion of results and
+   conclusion in her style. Diagnosis and advice are marked as drafts.
+5. Fills in `NPO verslag SJABLOON.docx`, keeping the logo and footer. Anything
+   she still needs to check is highlighted yellow.
+6. Puts a Google Docs copy in the case folder and delivers the .docx.
 
 ## Layout
 
@@ -33,7 +23,21 @@ python3 -m unittest discover -s tests
 |---|---|
 | `CLAUDE.md` | Rules the agent always follows |
 | `.claude/skills/process-case/` | Step-by-step case workflow |
-| `docs/naming-convention.md` | File naming and what each file type is for |
-| `tools/` | Scoring engine (norm lookup, z / percentile / T / scaled, classification) |
-| `norms/` | Norm data and classification labels (**currently fictional examples**) |
-| `templates/` | Report template (**placeholder**) |
+| `docs/naming-convention.md` | What a case folder must contain |
+| `docs/norm-sources.md` | Which norm table per test and norm group, plus her classification |
+| `docs/workflow.md` | Technical notes (Drive downloads and uploads) |
+| `templates/stijlgids.md` | Her writing style and fixed sentences |
+| `tools/scoring.py` | Conversions, Excel-exact rounding, classification |
+| `tools/build_report.py` | Fills the Word template from a content JSON |
+
+## Privacy
+
+- Patient files are never committed; `cases/` is git-ignored.
+- Norm tables stay on her Drive because they're copyrighted.
+- Keep this repository private.
+
+## Tests
+
+```
+python3 -m unittest discover -s tests
+```
