@@ -30,8 +30,10 @@ past aan en ondertekent.
    (zeer laag … zeer hoog).
 7. **Invullen in `NPO verslag SJABLOON.docx`**: logo, opmaak en voettekst
    blijven behouden.
-   - **Geel** = nog te controleren of aan te vullen door jou.
-   - **[CONCEPT]** = diagnose en advies. Dat is altijd jouw beslissing.
+
+    - **Geel** = nog te controleren of aan te vullen door jou.
+    - **[CONCEPT]** = diagnose en advies. Dat is altijd jouw beslissing.
+
 8. **Opleveren**: een Google Docs-versie in de patiëntenmap en het
    Word-bestand.
 
@@ -61,10 +63,12 @@ past aan en ondertekent.
 ## 5. De testcasus A.B.: wat er gebeurde
 
 **Opgeleverd**
+
 - Google Doc "NPO verslag A.B. (concept – Claude)" in de map NPO A.B.
 - Word-versie in jouw sjabloon (bezorgd via Tom)
 
 **Onderweg gevonden (graag je oordeel)**
+
 1. **AVLT A4**: op het formulier staan 8 woorden genoteerd, het totaal zegt 7.
    Op vraag van Tom werd 8 gebruikt, waardoor de som 31 wordt.
 2. **CFT onmiddellijke en uitgestelde reproductie**: de itemscores op het
@@ -88,6 +92,7 @@ past aan en ondertekent.
    VSI 89 is aangeraden.
 
 **Waar je extra naar mag kijken**
+
 - De **conceptdiagnose en het advies**. Verder genoemd: droomgedrag, sloffen
   en de familiale belasting voor Parkinson als reden voor neurologische
   correlatie.
@@ -134,8 +139,9 @@ volgende verslag er al rekening mee houdt.
   later te kunnen herberekenen).
 - **Instructies en code van de agent**: GitHub `tombuttiens-cpu/AgentNaomi`,
   branch `claude/neuropsych-paperwork-agent-2ytnhp`
-  - `CLAUDE.md`: vaste regels
-  - `.claude/skills/process-case/SKILL.md`: stappenplan per casus
-  - `docs/norm-sources.md`: welke normtabel voor welke test
-  - `templates/stijlgids.md`: jouw schrijfstijl
-  - `docs/feedback-log.md`: jouw feedback en wat ermee gebeurde
+
+    - `CLAUDE.md`: vaste regels
+    - `.claude/skills/process-case/SKILL.md`: stappenplan per casus
+    - `docs/norm-sources.md`: welke normtabel voor welke test
+    - `templates/stijlgids.md`: jouw schrijfstijl
+    - `docs/feedback-log.md`: jouw feedback en wat ermee gebeurde
