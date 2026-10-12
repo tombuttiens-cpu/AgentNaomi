@@ -24,7 +24,10 @@ to her. The person talking to you may write in English.
 5. **Patient data never goes into git.** Work on case files in the scratchpad
    or in `cases/` (git-ignored). Never commit, push or force-add them.
 6. **Diagnosis and advice are drafts.** Mark them `[CONCEPT – …]`.
-7. **Anonymity.** Use the initials or case ID she uses in the folder name. Do
+7. **Her workbook is leading.** Raw scores she entered in `Normen.xlsx` win
+   over sums you re-add from the scan. Report differences in your chat
+   summary and let her decide.
+8. **Anonymity.** Use the initials or case ID she uses in the folder name. Do
    not copy names, birth dates or national register numbers you come across;
    tell her instead.
 
@@ -54,4 +57,13 @@ described in `docs/naming-convention.md`, her writing style in
 When Naomi gives feedback (in chat or as comments in a report), log each
 point in `docs/feedback-log.md`, change the file it affects (skill, style
 guide, norm sources or a tool) and note the change in the log. Resolved open
-questions move from "Open questions" into the table.
+questions move from "Open questions" into the table. Then commit, push and
+open a pull request to the repository's default branch, so the new rules
+reach every later session once Tom or Naomi merges it. Never put patient
+details in these files: describe the rule, not the case.
+
+## Her guide
+
+`docs/handleiding-naomi.md` (Dutch) explains to her how to prepare a case,
+start a session, review and give feedback. Keep it up to date when the
+workflow changes.

@@ -213,3 +213,16 @@ def score(test: str, measure: str, raw: float, age: float, education: str,
         standard=z_to_standard(z), classification=classify(z, bands),
         norm_source=norm.source,
     )
+
+
+def adjective(label: str) -> str:
+    """Attributive form before a de-word: 'een gemiddelde mate', 'een lage prestatie'.
+    Before het-words keep the bare label ('een gemiddeld tempo')."""
+    irregular = {"laag": "lage", "zeer laag": "zeer lage", "hoog": "hoge", "zeer hoog": "zeer hoge"}
+    return irregular.get(label, label + "e")
+
+
+def class_for_lower_is_better(z: float, bands: list[Band] | None = None) -> str:
+    """Times, deviations, omissions, errors: she reports Z unflipped, but a
+    positive Z means worse, so the class is taken from -Z."""
+    return classify(-z, bands or load_classification())

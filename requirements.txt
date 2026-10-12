@@ -1,0 +1,7 @@
+# Libraries the agent uses to read scans, Word/Excel files and draw charts.
+pymupdf
+python-docx
+openpyxl
+xlrd
+matplotlib
+numpy

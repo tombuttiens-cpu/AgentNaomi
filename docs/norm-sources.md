@@ -10,7 +10,7 @@ find it and how she uses it.
 | Complexe Figuur van Rey | `Normen.xlsx` sheet `CFT` (Vingerhoets) | sex × educ × age ≤30 / 30–50 / >50 | `Z =` + time in seconds |
 | CFT drawing strategy | `Scoringssystemen CFT.docx` (RCF-OSS levels 1–7, Craeynest 2017) | – | wording such as "gefragmenteerde werkwijze" |
 | COWAT | `Normen.xlsx` sheet `COWAT` (Vingerhoets) | educ × age by decade (20–29 … 70+) | `Z =` |
-| Bourdon-Wiersma | `Normen.xlsx` sheets `Bourdon_invul` (row times) and `Bourdon Wiersma` (Vingerhoets) | age by decade; omissions also by educ | `Z =` for ART, AD, omissions, errors (as in the template; the workbook also gives percentiles) |
+| Bourdon-Wiersma | `Normen.xlsx` sheets `Bourdon_invul` (row times) and `Bourdon Wiersma` (Vingerhoets) | age by decade; omissions by educ (workbook has ≤ 12 j only) | `Z =` for ART, AD, omissions, errors, **computed over the first 25 rows** (her rule); plus a chart of all row times with a trend line |
 | D-KEFS Tower | `TOL.pdf` tables A.1–A.6, or `Normen.xlsx` sheet `Tower of London` | age 8 … 80–89 | `GS =`; rule violations as `Cum. % =` |
 | WAIS-IV-NL (VL) | `WAIS.pdf`: table A.1 (subtests per age group), C.1 (CRV/CRA process scores), A.5 (VSI) | 16–17 … 75–84 (e.g. 45:0–54:11, 55:0–64:11) | `GS =`; VSI with pct and 95% BI |
 | RDS | derived from digit span | – | value + "Cut-off ≤7" |
@@ -18,6 +18,14 @@ find it and how she uses it.
 | Kubus-Klok | `Scoreformulier Kubus Klok Tekentest.docx` | – | qualitative remark |
 | BDI-II-NL | `BDI.pdf`: 0–13 minimaal, 14–19 licht, 20–28 matig ernstig, 29–63 ernstig | – | total + category; items ≥ 1 in remark |
 | SCL-90 | N-norms (general population) in `Vragenlijst 2.xls`, sheet `Score` | – | raw score + zeer laag … zeer hoog; items ≥ 3 in remark |
+
+Reading in code: `tools/normen_xlsx.py` (AVLT, A8 percentiles, CFT, COWAT,
+Bourdon) reads these tables from her workbook. It was verified against her
+reference report (61 y) and against test case 1 (53 y); see
+`tests/test_normen_xlsx.py`.
+
+**Which raw score counts:** her entry in `Normen.xlsx` is leading (e.g. CFT
+half points). Differences with the scan go in the chat summary.
 
 ## Classification (her `Scorehulpmiddel`)
 

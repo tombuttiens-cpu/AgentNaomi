@@ -1,70 +1,85 @@
 ---
 name: process-case
-description: Turn one patient folder (intake notes, scanned test forms, Normen.xlsx, BDI/SCL-90 questionnaires) into a draft NPO report in Naomi's Word template. Use when she says "verwerk casus X", "maak het verslag voor X", or shares a new NPO folder.
+description: Turn one patient folder (intake notes, scanned test forms, Normen.xlsx, BDI/SCL-90 questionnaires) into a draft NPO report in Naomi's Word template. Use when she says "verwerk casus X", "maak het verslag voor X", or shares a new NPO folder (Drive link). Also used in comparison mode for cases she already reported.
 ---
 
 # Process an NPO case
 
 Write everything for her in Dutch. Keep patient files out of git (scratchpad
-or `cases/`).
+or `cases/`). Read `docs/feedback-log.md` first: every rule there is hers.
 
 ## 0. Collect
 
-1. List the case folder on Drive and download every file (see
-   `docs/workflow.md` for decoding saved downloads).
+1. Get the folder ID from the Drive link she pastes, list its files and
+   download them (see `docs/workflow.md`). Also download, once per session:
+   `NPO verslag SJABLOON.docx` and the style examples.
 2. Check the files against `docs/naming-convention.md`. For an unknown file,
    ask her what it is.
-3. From the intake notes (`Intakegesprek`), get **sex, age and education**.
-   If any is missing, ask her before scoring (hard rule 4).
+3. From `Intakegesprek`, get **sex, age, education** and the **personalia**
+   (referrer, consultation and test dates, profession, handedness), plus her
+   **impression, effort and cooperation** if she noted them. If sex, age or
+   education is missing, ask before scoring (hard rule 4).
+4. Write the case facts into a `case.json` in the scratchpad: demographics,
+   raw scores, remarks per test.
 
 ## 1. Read the raw scores
 
-- `Normen.xlsx` → sheet `Scorehulpmiddel`: her own entries (AVLT, CFT, COWAT,
-  Tower, Bourdon row times in `Bourdon_invul`). Use these as the primary raw
-  data.
-- `Testonderzoek <ID>.pdf` (scan): render the pages to images and read every
-  form. **Cross-check** each raw score in `Normen.xlsx` against the scan:
-  re-add item scores (CFT items, AVLT words per trial, digit span items).
-  Report every mismatch to her. Don't pick a value silently.
-- From the scan, also collect what isn't in `Normen.xlsx`: WAIS raw scores
-  (Cijferreeksen voorwaarts/achterwaarts, Symbool Zoeken, Symbool Substitutie),
-  VAT, the Kubus-Klok drawings, the CFT drawing order, and every handwritten
-  remark (quotes, "lacht", "afwezige indruk", time limits, …).
-- Reliable Digit Span = longest forward span with both trials correct +
-  longest backward span with both trials correct. Cut-off ≤ 7.
-- Questionnaires: `BDI-II-NL.xlsx` (21 items, total), `SCL-90_vragenlijst.xls`
-  (90 items; subscale totals on the last row, which you check against the
-  item key in `docs/norm-sources.md`).
+- **`Normen.xlsx` is leading** for every raw score she entered (sheets
+  `Scorehulpmiddel` and `Bourdon_invul`). She sometimes re-scores, e.g. half
+  points on the CFT, so her entry wins over a sum you re-add from the scan.
+- Read the scan `Testonderzoek <ID>.pdf` (render pages to PNG and look at
+  every page) to:
+  - **cross-check** her entries. Report every difference **in your chat
+    summary** and let her decide; don't put it in the report.
+  - collect what isn't in the workbook: WAIS raw scores (CRV, CRA, Symbool
+    Zoeken goed/fout, Symbool Substitutie), VAT, Kubus-Klok, digit-span
+    items, the CFT drawing order, and every handwritten remark
+    (quotes, "lacht", "afwezige indruk", time limits, skipped pages).
+- **Bourdon:** take the row times from `Bourdon_invul` and the omissions per
+  row from the scan (circled dots). Norms use the **first 25 rows**
+  (`normen_xlsx.bourdon_raw`).
+- Questionnaires: `BDI-II-NL.xlsx` (21 items) and `SCL-90_vragenlijst.xls`
+  (check the subscale totals against the item key in `docs/norm-sources.md`).
 
-## 2. Score
+## 2. Score (code only)
 
-Use code only. `tools/scoring.py` holds the conversions and her classification
-(`norms/classification.csv`). Norm groups and table locations are listed in
-`docs/norm-sources.md`. Before using a new calculation, reproduce at least one
-value already in her workbook or example reports. If no norm group fits,
-**stop and ask** (hard rule 3).
+- AVLT, CFT, COWAT, Bourdon: `tools/normen_xlsx.py` reads the norm group
+  straight from her `Normen.xlsx`. Z comes from `scoring.z_workbook`.
+- For times, average deviation, omissions and errors, take the class from
+  −Z (`scoring.class_for_lower_is_better`). Show Z unflipped, as she does.
+- Tower, WAIS, VAT, BDI, SCL-90: use the tables listed in
+  `docs/norm-sources.md`. Prove a table lookup against a known value first.
+- **No fitting norm group → stop and ask** (hard rule 3).
+- **RDS:** fill in the table row, but **don't interpret it** when the
+  question is about dementia or neurodegeneration. In other contexts, ask
+  her before discussing it.
 
 ## 3. Write the content
 
-Follow `templates/stijlgids.md` and the example reports. Sections:
+Follow `templates/stijlgids.md`. Generate the content JSON with a script that
+reads the scores, so no number is typed by hand. Use `scoring.adjective()`
+before de-words ("een gemiddelde mate").
 
-- **Personalia**: fill in what's known; put unknown fields in `[aan te vullen]`.
-- **Probleemstelling**: one sentence.
-- **(hetero)Anamnese**: turn the intake notes into her narrative style, using
-  the paragraph order in the style guide. Put medication names you're unsure
-  of in `[TE CONTROLEREN]`.
-- **Observaties**: the companion from the intake, plus the observations
-  written on the test forms. Leave her own impression as `[AAN TE VULLEN]`.
-- **Bespreking resultaten**: one paragraph per domain, using her fixed
-  sentences and the classification words (gemiddeld, laaggemiddeld, …).
-- **Besluit**: a summary of the anamnesis, the domains and the
-  questionnaires; an observation/validity sentence (RDS); the standard caveat;
-  then diagnosis and advice as `[CONCEPT]`.
-- **Bijlage tables**: every raw score and norm score in her format
-  (`Z = -0,94`, `GS = 9`, `Pct. 19`, `14,93”`), plus the `*Opmerking` rows.
-
-Write the content as JSON (format in `tools/build_report.py`), generated by a
-script that reads the scores file, so no number is typed by hand.
+- **Personalia:** take them from the intake. Name and date of birth stay
+  `_/_/_`; she fills those in herself.
+- **(hetero)Anamnese:** her narrative order. Copy the **medication list
+  literally** from the intake (no indications, no corrections). Expand known
+  abbreviations using the glossary in the style guide.
+- **OBSERVATIES:** the companion, plus her general impression, effort and
+  cooperation. If those aren't in the notes, write `[AAN TE VULLEN: …]`.
+  **Never** put test-specific observations here: those go in the table
+  under each test as `*Opmerking`.
+- **Bespreking resultaten:** her fixed sentences per domain. In the learning
+  curve, mention trials without an increase, or with a decrease.
+- **Besluit:** summary; one sentence on the questionnaires **without
+  repeating subscale names**; an "Observationeel …" sentence; the standard
+  caveat; then `[CONCEPT – …]` diagnosis and advice.
+- **Attachment tables:** one `*Opmerking` per test, including errors and
+  skipped items or pages. Pictures:
+  - the cube and clock drawings, cropped from the scan, in the row
+    `Kubus-Klok teken test`
+  - the Bourdon chart (`tools/charts.py`) in the empty row under `41-50`
+- Put scale and item names between “ ” so they come out in italics.
 
 ## 4. Build and deliver
 
@@ -72,13 +87,28 @@ script that reads the scores file, so no number is typed by hand.
 python tools/build_report.py "NPO verslag SJABLOON.docx" content.json "NPO verslag <ID> (concept).docx" --html report.html
 ```
 
-- Put the HTML in the case folder as a Google Doc (`create_file` with
-  `text/html`, title `NPO verslag <ID> (concept – Claude)`).
-- Send the .docx to the user with `SendUserFile`. It is too large for the
-  Drive connector because of the letterhead images.
+- Put the HTML in the case folder as a Google Doc titled
+  `NPO verslag <ID> (concept – Claude)`.
+- Send the .docx to her with `SendUserFile`.
+- Save the case script(s) in the case folder as `claude_werkbestand_*.py`,
+  so the case can be rebuilt after feedback.
 
 ## 5. Report back (Dutch, short)
 
-- which norm groups were used
-- every mismatch between the scan and `Normen.xlsx`, and which value you used
-- everything marked `[TE CONTROLEREN]`, `[AAN TE VULLEN]` and `[CONCEPT]`
+- the norm groups used
+- differences between the scan and `Normen.xlsx` (her values were used)
+- everything marked `[TE CONTROLEREN]`, `[AAN TE VULLEN]`, `[CONCEPT]`
+
+## Comparison mode (cases she already reported)
+
+When she asks to compare ("vergelijk met mijn verslag"):
+
+1. Make the draft **without opening her final report**. Exclude any file
+   whose name contains `verslag` or `definitief`.
+2. Then read her report and write `Vergelijking <ID>` (a Google Doc in the
+   case folder) with a table:
+   - section
+   - difference (numbers, classification, wording, missing or extra content)
+   - who is right, or a question for her
+3. Log every systematic difference in `docs/feedback-log.md` and fix the
+   rule it points to.

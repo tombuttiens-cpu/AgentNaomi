@@ -20,6 +20,10 @@ content.json keys (all Dutch text):
     rows: [{find, set: {cell_index: text}}]     fill table rows
     delete_rows: [find, ...]                    tests that were not administered
     remarks_after: [{after, text}]              extra *Opmerking rows
+    images: [{row, offset, paths, width_cm}]    pictures (scans, charts) placed in the
+                                                first cell of the row `offset` rows
+                                                below the row matching `row`
+Text between “curly quotes” (scale and item names) is set in italics.
 A row is found when `find` is a substring of its cell texts joined by " | ".
 """
 
@@ -33,8 +37,11 @@ import sys
 
 import docx
 from docx.enum.text import WD_COLOR_INDEX
+from docx.shared import Cm
 
 BRACKETS = re.compile(r"(\[[^\]]*\])")
+# Split on [check points] and on “scale names” (her style: subscales in italics).
+SEGMENTS = re.compile(r"(\[[^\]]*\]|“[^”]*”)")
 
 
 # ---------------------------------------------------------------- helpers
@@ -45,7 +52,7 @@ def set_runs(paragraph, text, italic=None, bold=None):
     proto = copy.deepcopy(runs[0]._r) if runs else None
     for r in runs:
         r._r.getparent().remove(r._r)
-    for part in BRACKETS.split(text):
+    for part in SEGMENTS.split(text):
         if not part:
             continue
         if proto is not None:
@@ -61,6 +68,8 @@ def set_runs(paragraph, text, italic=None, bold=None):
             run.bold = bold
         if part.startswith("["):
             run.font.highlight_color = WD_COLOR_INDEX.YELLOW
+        if part.startswith("“"):
+            run.italic = True
 
 
 def insert_paragraph_after(paragraph, text):
@@ -191,6 +200,17 @@ def build(template, content, out):
         new_row = docx.table._Row(new_tr, table)
         set_cell(unique_cells(new_row)[0], spec["text"])
 
+    # Pictures: drawings from the scan, charts
+    for spec in c.get("images", []):
+        table = next(t for t in tables if any(spec["row"] in row_key(r) for r in t.rows))
+        rows = list(table.rows)
+        idx = next(i for i, r in enumerate(rows) if spec["row"] in row_key(r)) + spec.get("offset", 0)
+        cell = unique_cells(rows[idx])[0]
+        para = cell.add_paragraph()
+        for path in spec["paths"]:
+            para.add_run().add_picture(path, width=Cm(spec.get("width_cm", 6)))
+            para.add_run("   ")
+
     # Footer
     for section in doc.sections:
         for para in section.footer.paragraphs:
@@ -213,7 +233,8 @@ def to_html(doc_path):
 
     def esc(t):
         t = html.escape(t)
-        return BRACKETS.sub(r'<span style="background:#ffff00">\1</span>', t)
+        t = BRACKETS.sub(r'<span style="background:#ffff00">\1</span>', t)
+        return re.sub(r"(“[^”]*”)", r"<i>\1</i>", t)
 
     for child in body.iterchildren():
         tag = child.tag.split("}")[1]

@@ -11,11 +11,12 @@ d = json.load(open(saved_path))
 open("file.pdf", "wb").write(base64.b64decode(d["content"]))
 ```
 
-The Python packages needed are `pymupdf` (render scans to PNG), `python-docx`,
-`openpyxl` and `xlrd`:
+The Python packages are listed in `requirements.txt`. In Claude Code on the
+web, the SessionStart hook (`.claude/hooks/session-start.sh`) installs them
+automatically and puts `tools/` on `PYTHONPATH`. Locally, run:
 
 ```
-pip install pymupdf python-docx openpyxl xlrd
+pip install -r requirements.txt
 ```
 
 Render scan pages at about 110 dpi to read them, and crop at 220–300 dpi for
@@ -33,3 +34,13 @@ handwriting.
 In the cloud container, LibreOffice can't open files. Don't rely on it to
 recalculate `Normen.xlsx`. Reimplement the formulas instead, and prove the
 reimplementation by reproducing the cached values in the workbook.
+
+## Case scripts
+
+Per case, write two small scripts in the scratchpad:
+
+- `score_<ID>.py`: case facts, plus norms from `tools/normen_xlsx.py`, gives `scores_<ID>.json`
+- `content_<ID>.py`: report text from the scores, gives `content_<ID>.json` for `tools/build_report.py`
+
+Upload both to the case folder as `claude_werkbestand_*.py`. After feedback,
+the next session downloads them, changes them and rebuilds the report.
